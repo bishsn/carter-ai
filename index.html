@@ -1,0 +1,347 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080808">
+<title>CART3R AI</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #080808;
+  color: #f5f5f5;
+  font-family: Arial, sans-serif;
+}
+
+header {
+  height: 70px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #351414;
+}
+
+.logo {
+  color: #ff3333;
+  font-size: 23px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.status {
+  color: #55d68a;
+  font-size: 11px;
+}
+
+main {
+  max-width: 750px;
+  margin: auto;
+  padding: 20px;
+}
+
+.hero {
+  margin: 25px 0;
+}
+
+.hero h1 {
+  font-size: 30px;
+  color: #ff3939;
+}
+
+.hero p {
+  color: #999;
+}
+
+.section-title {
+  font-size: 15px;
+  color: #aaa;
+  margin: 25px 0 12px;
+}
+
+.skills {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.skill {
+  background: #151515;
+  color: white;
+  border: 1px solid #402020;
+  padding: 17px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+  text-align: right;
+}
+
+.skill:active {
+  background: #351010;
+}
+
+.chat {
+  margin-top: 20px;
+  min-height: 260px;
+  max-height: 45vh;
+  overflow-y: auto;
+}
+
+.message {
+  padding: 14px;
+  margin: 12px 0;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.ai {
+  background: #171717;
+  border: 1px solid #392020;
+}
+
+.user {
+  background: #351010;
+  margin-right: 30px;
+}
+
+.input-area {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  gap: 8px;
+  padding: 12px 0;
+  background: #080808;
+}
+
+textarea {
+  flex: 1;
+  min-width: 0;
+  resize: none;
+  background: #171717;
+  color: white;
+  border: 1px solid #492020;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 15px;
+  outline: none;
+}
+
+.send {
+  background: #d92323;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0 17px;
+  font-weight: bold;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  color: #aaa;
+  font-size: 13px;
+}
+
+.actions button,
+.actions label {
+  background: none;
+  color: #aaa;
+  border: none;
+  cursor: pointer;
+}
+
+input[type=file] {
+  display: none;
+}
+
+footer {
+  text-align: center;
+  color: #555;
+  font-size: 11px;
+  padding: 25px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">CART3R AI</div>
+  <div class="status">● SYSTEM READY</div>
+</header>
+
+<main>
+
+<div class="hero">
+  <h1>أهلاً بك.</h1>
+  <p>ذكاؤك الاصطناعي الخاص. تحكم بقدراتك وطورها.</p>
+</div>
+
+<div class="section-title">DEVELOPER TOOLS</div>
+
+<div class="skills">
+
+<button class="skill"
+onclick="setPrompt('ساعدني في كتابة كود Python')">
+⌘ البرمجة
+</button>
+
+<button class="skill"
+onclick="setPrompt('ساعدني في البحث والتعلم')">
+◈ البحث والتعلم
+</button>
+
+<button class="skill"
+onclick="setPrompt('ساعدني في إنشاء وكيل ذكاء اصطناعي')">
+◉ وكلاء AI
+</button>
+
+<button class="skill"
+onclick="setPrompt('ساعدني في تطوير لعبة احترافية')">
+◆ تطوير الألعاب
+</button>
+
+</div>
+
+<div class="section-title">CONVERSATION</div>
+
+<div id="chat" class="chat">
+<div class="message ai">
+CART3R AI
+
+تم تشغيل الواجهة بنجاح.
+
+أنا مساعدك الشخصي قيد التطوير.
+انتظر ربط محرك الذكاء الاصطناعي.
+</div>
+</div>
+
+<div class="actions">
+<label>
++ إرفاق ملف
+<input type="file" id="file"
+accept="image/*,.pdf,.txt,.py,.js,.html,.json"
+onchange="attachFile(this)">
+</label>
+
+<button onclick="clearChat()">مسح المحادثة</button>
+</div>
+
+<div class="input-area">
+<textarea id="prompt"
+rows="2"
+placeholder="اكتب رسالتك هنا..."></textarea>
+
+<button class="send" onclick="sendMessage()">
+إرسال
+</button>
+</div>
+
+</main>
+
+<footer>
+CART3R AI — PERSONAL INTELLIGENCE SYSTEM
+<br><br>
+VERSION 1.0.0
+</footer>
+
+<script>
+
+const chat = document.getElementById("chat");
+const promptBox = document.getElementById("prompt");
+
+let messages = JSON.parse(
+localStorage.getItem("carter_messages") || "[]"
+);
+
+function render() {
+chat.innerHTML = "";
+
+messages.forEach(message => {
+const div = document.createElement("div");
+div.className = "message " + message.role;
+div.textContent = message.text;
+chat.appendChild(div);
+});
+
+chat.scrollTop = chat.scrollHeight;
+}
+
+function save() {
+localStorage.setItem(
+"carter_messages",
+JSON.stringify(messages)
+);
+}
+
+function addMessage(role, text) {
+messages.push({role, text});
+save();
+render();
+}
+
+function sendMessage() {
+const text = promptBox.value.trim();
+
+if (!text) return;
+
+addMessage("user", text);
+
+promptBox.value = "";
+
+addMessage(
+"ai",
+"تم استلام رسالتك.\n\nمحرك الذكاء الاصطناعي غير مربوط حالياً. سيتم تفعيله في المرحلة الثانية."
+);
+}
+
+function setPrompt(text) {
+promptBox.value = text;
+promptBox.focus();
+}
+
+function clearChat() {
+if (!confirm("هل تريد مسح المحادثة؟")) return;
+
+messages = [];
+save();
+render();
+}
+
+function attachFile(input) {
+const file = input.files[0];
+
+if (!file) return;
+
+addMessage(
+"user",
+"تم اختيار الملف: " + file.name +
+"\nالحجم: " + Math.round(file.size / 1024) + " KB" +
+"\nسيتم إضافة تحليل الملفات في المرحلة القادمة."
+);
+
+input.value = "";
+}
+
+promptBox.addEventListener("keydown", function(e) {
+if (e.key === "Enter" && !e.shiftKey) {
+e.preventDefault();
+sendMessage();
+}
+});
+
+render();
+
+</script>
+
+</body>
+</html>
